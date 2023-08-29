@@ -1,6 +1,7 @@
 import sys
 import os
 from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
 
 google = Image.open("google.png")
 google = google.convert("RGBA")
@@ -25,7 +26,9 @@ def printProgress(x):
     count = str(x) + "/" + str(length)
     progress = int(bar_len * (x / length))
     sys.stdout.write("\r")
-    sys.stdout.write("Generating frames	%s [%s]" % (" " * (max_count_len - len(count)) + count, ("#" * progress) + ("-" * (bar_len - progress))))
+    sys.stdout.write("Generating frames	%s [%s]" %
+                        (" " * (max_count_len - len(count)) + count,
+                        ("#" * progress) + ("-" * (bar_len - progress))))
     sys.stdout.flush()
 
 frames = []
@@ -35,18 +38,17 @@ chars = 0
 for i in range(length + 1):
     img = Image.new(mode='RGBA', size=(441,20), color=(255,255,255,255))
     draw = ImageDraw.Draw(img)
-    pos = font.getsize(txt[:i])[0]
+    pos = font.getlength(txt[:i])
     x = 1
     if pos > 440:
-        while font.getsize(txt[chars+1:i])[0] > 440:
+        while font.getlength(txt[chars+1:i]) > 440:
             chars += 1
-        x = 440 - font.getsize(txt[chars:i])[0]
+        x = 440 - font.getlength(txt[chars:i])
         pos = 440
     draw.text((x, 0), txt[chars:i], font=font, fill=(21,21,21,255))
     draw.line([(pos, 1), (pos, 17)], fill=(21,21,21,255), width=1)
     out = google.copy()
     out.paste(img, (64,147))
-    frames.append(out)
     printProgress(i)
 
 sys.stdout.write("\n")
