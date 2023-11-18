@@ -49,6 +49,7 @@ for i in range(length + 1):
     draw.line([(pos, 1), (pos, 17)], fill=(21,21,21,255), width=1)
     out = google.copy()
     out.paste(img, (64,147))
+    frames.append(out)
     printProgress(i)
 
 sys.stdout.write("\n")
